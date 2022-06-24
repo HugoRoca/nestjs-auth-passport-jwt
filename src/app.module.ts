@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { environments } from './environments';
+import { DatabaseModule } from './database/database.module';
 import config from './config';
 
 @Module({
@@ -18,10 +19,12 @@ import config from './config';
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().required(),
         TITLE: Joi.string().required(),
+        MONGO_URI: Joi.string().required(),
       }),
     }),
     AuthModule,
     ProductsModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
