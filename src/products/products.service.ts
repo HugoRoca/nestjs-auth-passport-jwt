@@ -1,28 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
+import { ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectModel(Product.name) private productModel: Model<Product>,
-  ) {}
+  constructor(private readonly productRepository: ProductsRepository) {}
 
   create(data: CreateProductDto) {
-    const newProduct = new this.productModel(data);
-    return newProduct.save();
+    return this.productRepository.create(data);
   }
 
   findAll() {
-    return this.productModel.find().exec();
+    return this.productRepository.find({});
   }
 
   findOne(id: string) {
-    const product = this.productModel.findById(id).exec();
+    const product = this.productRepository.findOne({ id });
 
     if (!product)
       throw new NotFoundException(`Product with id: ${id} not exists.`);
@@ -31,15 +26,7 @@ export class ProductsService {
   }
 
   update(id: string, data: UpdateProductDto) {
-    const product = this.productModel
-      .findByIdAndUpdate(
-        id,
-        {
-          $set: data,
-        },
-        { new: true },
-      )
-      .exec();
+    const product = this.productRepository.findOneAndUpdate({ id }, data);
 
     if (!product)
       throw new NotFoundException(`Product with id: ${id} not exists.`);
@@ -48,6 +35,6 @@ export class ProductsService {
   }
 
   remove(id: string) {
-    return this.productModel.findByIdAndRemove(id).exec();
+    return this.productRepository.findOneAndDelete({ id });
   }
 }
