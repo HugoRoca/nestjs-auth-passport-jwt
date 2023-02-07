@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import config from '../config';
+import { DatabaseService } from './Database.service';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import config from '../config';
       inject: [config.KEY],
     }),
   ],
-  exports: [MongooseModule],
+  providers: [DatabaseService],
+  exports: [MongooseModule, DatabaseService],
 })
 export class DatabaseModule {}
